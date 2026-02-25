@@ -1,21 +1,7 @@
 import cv2 as cv
 import time
 import os
-
-def threshold(img, thresh):
-    # make a binary copy
-    bw = img.copy()
-
-    # loop through pixels
-    for x in range(0, bw.shape[0]):
-        for y in range(0, bw.shape[1]):
-            if bw[x, y] > thresh:
-                bw[x, y] = 255
-            else:
-                bw[x, y] = 0
-
-    return bw
-
+from thresholding import threshold
 
 # loop through o-ring images
 for i in range(1, 16):
