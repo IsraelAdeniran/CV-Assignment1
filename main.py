@@ -1,7 +1,7 @@
 import cv2 as cv
 import time
 import os
-from thresholding import threshold
+from thresholding import build_histogram, otsu_threshold, threshold
 
 # loop through o-ring images
 for i in range(1, 16):
@@ -20,9 +20,15 @@ for i in range(1, 16):
     # start timer
     before = time.time()
 
+    # build histogram
+    hist = build_histogram(img)
+
+    # get otsu threshold
+    total = img.shape[0] * img.shape[1]
+    thresh_val = otsu_threshold(hist, total)
+
     # threshold image
-    thresh = 100
-    bw = threshold(img, thresh)
+    bw = threshold(img, thresh_val)
 
     # end timer
     after = time.time()
