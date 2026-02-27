@@ -2,6 +2,7 @@ import cv2 as cv
 import time
 import os
 from thresholding import build_histogram, otsu_threshold, threshold
+from morphology import dilate
 
 # loop through o-ring images
 for i in range(1, 16):
@@ -29,6 +30,9 @@ for i in range(1, 16):
 
     # threshold image
     bw = threshold(img, thresh_val)
+
+    # dilate once
+    bw = dilate(bw, 1)
 
     # end timer
     after = time.time()
