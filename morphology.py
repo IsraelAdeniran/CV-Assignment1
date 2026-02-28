@@ -65,3 +65,12 @@ def erode(img, num_levels):
         img = out
 
     return out
+
+def closing(img, num_levels):
+    # dilate first to fill small gaps
+    out = dilate(img, num_levels)
+
+    # erode after to shrink back
+    out = erode(out, num_levels)
+
+    return out
