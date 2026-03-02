@@ -3,6 +3,8 @@ import time
 import os
 from thresholding import build_histogram, otsu_threshold, threshold
 from morphology import closing
+from ccl import label_components
+
 # loop through o-ring images
 for i in range(1, 16):
 
@@ -32,6 +34,12 @@ for i in range(1, 16):
 
     # close small holes
     bw = closing(bw, 1)
+
+    # label regions
+    labels, areas = label_components(bw, 8)
+
+    # print how many blobs
+    print("Image", i, "components:", len(areas))
 
     # end timer
     after = time.time()
