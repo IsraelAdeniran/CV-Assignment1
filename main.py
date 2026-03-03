@@ -3,7 +3,7 @@ import time
 import os
 from thresholding import build_histogram, otsu_threshold, threshold
 from morphology import closing
-from ccl import label_components
+from ccl import label_components, largest_component_mask
 
 # loop through o-ring images
 for i in range(1, 16):
@@ -38,6 +38,9 @@ for i in range(1, 16):
     # label regions
     labels, areas = label_components(bw, 8)
 
+    # keep only the biggest region
+    ring_mask, ring_label = largest_component_mask(labels, areas)
+
     # print how many blobs
     print("Image", i, "components:", len(areas))
 
@@ -46,7 +49,7 @@ for i in range(1, 16):
     t = after - before
 
     # convert for drawing
-    rgb = cv.cvtColor(bw, cv.COLOR_GRAY2RGB)
+    rgb = cv.cvtColor(ring_mask, cv.COLOR_GRAY2RGB)
 
     # add simple text
     cv.putText(rgb, "Image: " + str(i), (20, 30),

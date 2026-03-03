@@ -54,3 +54,27 @@ def label_components(bw, connectivity=8):
                             q.append((ny, nx))
 
     return labels, areas
+
+def largest_component_mask(labels, areas):
+    # handle case with no components
+    if len(areas) == 0:
+        return np.zeros_like(labels, dtype=np.uint8), 0
+
+    # find label with the biggest area
+    best_label = 0
+    best_area = -1
+    for lab in areas:
+        if areas[lab] > best_area:
+            best_area = areas[lab]
+            best_label = lab
+
+    # build mask image
+    mask = np.zeros_like(labels, dtype=np.uint8)
+
+    # keep only largest label
+    for i in range(0, labels.shape[0]):
+        for j in range(0, labels.shape[1]):
+            if labels[i, j] == best_label:
+                mask[i, j] = 255
+
+    return mask, best_label
