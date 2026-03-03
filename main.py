@@ -32,6 +32,9 @@ for i in range(1, 16):
     # threshold image
     bw = threshold(img, thresh_val)
 
+    # invert so the ring becomes 255
+    bw = 255 - bw
+
     # close small holes
     bw = closing(bw, 1)
 
@@ -48,8 +51,10 @@ for i in range(1, 16):
     after = time.time()
     t = after - before
 
-    # convert for drawing
-    rgb = cv.cvtColor(ring_mask, cv.COLOR_GRAY2RGB)
+    # invert mask for display (ring black, hole white, background white)
+    show = 255 - ring_mask
+
+    rgb = cv.cvtColor(show, cv.COLOR_GRAY2RGB)
 
     # add simple text
     cv.putText(rgb, "Image: " + str(i), (20, 30),
