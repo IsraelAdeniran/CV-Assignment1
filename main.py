@@ -51,10 +51,8 @@ for i in range(1, 16):
     after = time.time()
     t = after - before
 
-    # invert mask for display (ring black, hole white, background white)
-    show = 255 - ring_mask
-
-    rgb = cv.cvtColor(show, cv.COLOR_GRAY2RGB)
+    # convert for drawing
+    rgb = cv.cvtColor(ring_mask, cv.COLOR_GRAY2RGB)
 
     # add simple text
     cv.putText(rgb, "Image: " + str(i), (20, 30),
