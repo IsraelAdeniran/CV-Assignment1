@@ -60,24 +60,30 @@ for i in range(1, 16):
     # convert for drawing
     rgb = cv.cvtColor(ring_mask, cv.COLOR_GRAY2RGB)
 
+    # create bigger canvas so text does not cover ring
+    canvas = cv.copyMakeBorder(
+        rgb,
+        150, 50,
+        50, 50,
+        cv.BORDER_CONSTANT,
+        value=(0, 0, 0)
+    )
+
     # add image number
-    cv.putText(rgb, "Image: " + str(i), (20, 30),
+    cv.putText(canvas, "Image: " + str(i), (20, 40),
                cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
-    # add processing time
-    cv.putText(rgb, "Time: " + str(round(t, 4)) + "s", (20, 60),
+    # add time
+    cv.putText(canvas, "Time: " + str(round(t, 4)) + "s", (20, 80),
                cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
     # add result
-    cv.putText(rgb, "Result: " + result, (20, 90),
+    cv.putText(canvas, "Result: " + result, (20, 120),
                cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
-    # add hole count
-    cv.putText(rgb, "Holes: " + str(holes), (20, 120),
-               cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
     # show result
-    cv.imshow("ring mask", rgb)
+    cv.imshow("ring mask", canvas)
     cv.waitKey(0)
 
 cv.destroyAllWindows()
