@@ -3,7 +3,7 @@ import time
 import os
 from thresholding import build_histogram, otsu_threshold, threshold
 from morphology import closing
-from ccl import label_components, largest_component_mask
+from ccl import label_components, largest_component_mask, count_holes
 
 # loop through o-ring images
 for i in range(1, 16):
@@ -32,7 +32,7 @@ for i in range(1, 16):
     # threshold image
     bw = threshold(img, thresh_val)
 
-    # invert so the ring becomes 255
+    # invert so ring becomes 255
     bw = 255 - bw
 
     # close small holes
@@ -44,8 +44,14 @@ for i in range(1, 16):
     # keep only the biggest region
     ring_mask, ring_label = largest_component_mask(labels, areas)
 
-    # print how many blobs
-    print("Image", i, "components:", len(areas))
+    # count holes in the ring
+    holes = count_holes(ring_mask)
+
+    # pass fail check
+    if holes == 1:
+        result = "PASS"
+    else:
+        result = "FAIL"
 
     # end timer
     after = time.time()
@@ -54,15 +60,24 @@ for i in range(1, 16):
     # convert for drawing
     rgb = cv.cvtColor(ring_mask, cv.COLOR_GRAY2RGB)
 
-    # add simple text
+    # add image number
     cv.putText(rgb, "Image: " + str(i), (20, 30),
                cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
+    # add processing time
     cv.putText(rgb, "Time: " + str(round(t, 4)) + "s", (20, 60),
                cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
+    # add result
+    cv.putText(rgb, "Result: " + result, (20, 90),
+               cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
+    # add hole count
+    cv.putText(rgb, "Holes: " + str(holes), (20, 120),
+               cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
     # show result
-    cv.imshow("thresholded image", rgb)
+    cv.imshow("ring mask", rgb)
     cv.waitKey(0)
 
 cv.destroyAllWindows()

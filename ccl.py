@@ -6,11 +6,11 @@ def label_components(bw, connectivity=8):
 
     # pick neighbours
     if connectivity == 4:
-        neighbours = [(-1,0),(1,0),(0,-1),(0,1)]
+        neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     else:
-        neighbours = [(-1,-1),(-1,0),(-1,1),
-                      (0,-1),        (0,1),
-                      (1,-1),(1,0),(1,1)]
+        neighbours = [(-1, -1), (-1, 0), (-1, 1),
+                      (0, -1),           (0, 1),
+                      (1, -1),  (1, 0),  (1, 1)]
 
     # label counter
     curlab = 0
@@ -60,7 +60,7 @@ def largest_component_mask(labels, areas):
     if len(areas) == 0:
         return np.zeros_like(labels, dtype=np.uint8), 0
 
-    # find label with the biggest area
+    # find label with biggest area
     best_label = 0
     best_area = -1
     for lab in areas:
@@ -78,3 +78,33 @@ def largest_component_mask(labels, areas):
                 mask[i, j] = 255
 
     return mask, best_label
+
+
+def count_holes(ring_mask):
+    # invert ring so holes become white
+    inv = 255 - ring_mask
+
+    # label inverted image
+    labels, areas = label_components(inv, 8)
+
+    # count blobs that do not touch image edge
+    hole_count = 0
+
+    for lab in areas:
+        touches_edge = False
+
+        # check left and right edges
+        for y in range(0, labels.shape[0]):
+            if labels[y, 0] == lab or labels[y, labels.shape[1] - 1] == lab:
+                touches_edge = True
+
+        # check top and bottom edges
+        for x in range(0, labels.shape[1]):
+            if labels[0, x] == lab or labels[labels.shape[0] - 1, x] == lab:
+                touches_edge = True
+
+        # blobs not touching the edge are holes
+        if not touches_edge:
+            hole_count += 1
+
+    return hole_count
